@@ -16,19 +16,24 @@ npm install git+https://github.com/xiaomocqk/nap.git --save
 
 nap 是一个函数，它需要接收一个内部返回`promise`对象的函数，如下面例子中的`reqUserInfo`。
 
-nap 内部已经对请求结果进行了数据处理，返回一个数组，目的是为了对`async-await`进行错误处理，这样就可以不使用`try-catch`层包裹了。
+nap 内部已经对请求结果进行了错误处理和数据处理，返回一个数组。
 
 ```js
 // request.js
 export function reqUserInfo() {
   return axios('/api/user');
 }
+
+export function nap_reqUserInfo() {
+  // reqUserInfo应定义在外部，即每次调用时必须是同一个对象
+  return nap(reqUserInfo);
+}
 ```
 
 ```js
 // App.js
 import React, { useState } from 'react';
-import { reqUserInfo } from './request.js';
+import { nap_reqUserInfo } from './request.js';
 
 export default function App() {
   let [userInfo, setUserInfo] = useState({});
@@ -41,7 +46,9 @@ export default function App() {
   );
 
   async function onSubmit() {
-    let [err, res] = await nap(reqUserInfo);
+    let [err, res] = await nap_reqUserInfo();
+    // 可以对比下不使用nap的结果
+    // let [err, res] = await reqUserInfo();
 
     if (err) {
       console.log(err);
