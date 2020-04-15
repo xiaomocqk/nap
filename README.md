@@ -49,18 +49,18 @@ export default function App() {
   );
 
   async function onGetUserInfo() {
+    // 不再需要`try-catch`包裹`async-await`了，扁平化处理错误
     const [err, res] = await reqUserInfo();
 
     // 获取失败
     if (err) return;
 
     // 获取成功
-    console.log('重复点击按钮试试，我一起发起请求！');
+    console.log('重复点击按钮试试，我都会发起请求！');
     setUserInfo(res.data);
   }
 
   async function onUpload() {
-    // 不再需要`try-catch`包裹`async-await`了
     const [err, res] = await reqUpload();
 
     if (err) {
